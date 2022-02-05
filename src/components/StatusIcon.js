@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 const StatusIcon = ({status='UNREAD'}) => {
-    console.log(status)
     const statusList= {
         FAVORITE: {
             icon: 'star',
