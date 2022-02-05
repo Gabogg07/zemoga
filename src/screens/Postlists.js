@@ -8,7 +8,8 @@ import ErrorMessage from '../components/ErrorMessage'
 import LoadingComponent from '../components/LoadingComponent';
 import EmptyListMessage from '../components/EmptyListMessage'
 import { Ionicons } from '@expo/vector-icons';
-
+import {sortByFavorite, changePostStatus} from '../helpers/helpers'
+import {storeData, getData} from '../helpers/asyncStorageHelpers'
 
 const PostList = ({navigation}) => {
   navigation.setOptions({
@@ -18,7 +19,7 @@ const PostList = ({navigation}) => {
         'By continuing all posts will be deleted',
         [
           {text:'Cancel', onPress: ()=>{}, style:'default'}, 
-          {text:'Delete', onPress: ()=>setPosts([]), style:'destructive'}
+          {text:'Delete', onPress: ()=>setSortedPostsState([]), style:'destructive'}
         ]
       )}}>
         <View style={{padding:10, marginRight:10}}>
@@ -31,15 +32,20 @@ const PostList = ({navigation}) => {
   const [posts, setPosts] = useState([])
   const [postListLoading, setPostListLoading] = useState(true)
   const [postError, setPostError] = useState(false)
-  const [sortedPosts, setSortedPosts] = useState([])
+  const [sortedPosts, setSortedPostsState] = useState([])
+
+  const setSortedPosts = (newPosts) => {
+    storeData('posts', newPosts)
+    setSortedPostsState(newPosts)
+  }
 
   const fetchPosts = ()=>{
     setPostListLoading(true)
     axios.get("https://jsonplaceholder.typicode.com/posts").then((data) => {
-      console.log('NUEVA DATA')
-      setPosts(data.data.slice(0,3))
+      const newPosts = data.data.slice(0,3)
+      setPosts(newPosts)
       setPostError(false)
-      orderPosts(data.data.slice(0,3))
+      setSortedPosts(sortByFavorite([...newPosts]))
     })
     .catch(() => {
       setPostError("Something wrong happened to get the post list");
@@ -49,32 +55,24 @@ const PostList = ({navigation}) => {
     });
   }
 
+  const findInitialState = async () => {
+    let storedPosts = await getData('posts')
+    if(storedPosts){
+      console.log('STORED')
+      console.log(storedPosts)
+      setSortedPostsState(storedPosts)
+      setPostListLoading(false)
+    } else {
+      fetchPosts()
+    }
+  }
+
   useEffect(()=>{
-    fetchPosts()
+    findInitialState()
   },[])
 
-  const orderPosts = (toOrder) => {
-    let sortHelper = toOrder
-    sortHelper.sort((a, b)=>{
-      if(a.status === 'FAVORITE') return -1
-      if(b.status === 'FAVORITE') return 1
-      return 0
-    })
-    setSortedPosts(sortHelper)
-  }
-
-  const changePostStatus = (postId, newStatus) => {
-    let index = posts.findIndex((element)=>{
-      return  element.id === postId
-    })
-    let newArray = posts
-    newArray[index].status = newStatus
-    orderPosts([...newArray])
-  }
-  
-
   const onPressHandler = (post) => {
-    navigation.navigate('PostDetail', { post, changeStatus: (newStatus) => changePostStatus(post.id, newStatus)})
+    navigation.navigate('PostDetail', { post, changeStatus: (newStatus) => setSortedPosts(sortByFavorite(changePostStatus(post.id, newStatus, sortedPosts)),)})
   }
 
   const onDelete = (postId) => {
@@ -105,7 +103,7 @@ const PostList = ({navigation}) => {
     )
   }
 
-  if(posts.length === 0){
+  if(sortedPosts.length === 0){
     return <EmptyListMessage OnRetry={fetchPosts}/>
   }
 
