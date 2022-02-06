@@ -42,7 +42,7 @@ const PostList = ({navigation}) => {
   const fetchPosts = ()=>{
     setPostListLoading(true)
     axios.get("https://jsonplaceholder.typicode.com/posts").then((data) => {
-      const newPosts = data.data.slice(0,3)
+      const newPosts = data.data
       setPosts(newPosts)
       setPostError(false)
       setSortedPosts(sortByFavorite([...newPosts]))
@@ -58,8 +58,6 @@ const PostList = ({navigation}) => {
   const findInitialState = async () => {
     let storedPosts = await getData('posts')
     if(storedPosts){
-      console.log('STORED')
-      console.log(storedPosts)
       setSortedPostsState(storedPosts)
       setPostListLoading(false)
     } else {

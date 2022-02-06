@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 const PostCard = ({post, status, onPress, onLongPress, style}) => {
     useEffect(()=>{
-        console.log('CAMBIO', status)
     }, [status])
     return (
         <TouchableWithoutFeedback onPress={()=>onPress()} onLongPress={()=> onLongPress()}>
