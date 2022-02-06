@@ -1,7 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableWithoutFeedback} from "react-native";
-import StatusIcon from "../components/StatusIcon"
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, } from "react-native";
 
 const CommentCard = ({comment}) => {
     return (

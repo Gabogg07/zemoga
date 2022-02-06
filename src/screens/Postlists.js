@@ -1,5 +1,3 @@
-import axios from 'axios';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { TouchableWithoutFeedback, Alert, FlatList, StyleSheet, Text, View} from 'react-native';
 import Container from '../components/Container'
@@ -10,6 +8,7 @@ import EmptyListMessage from '../components/EmptyListMessage'
 import { Ionicons } from '@expo/vector-icons';
 import {sortByFavorite, changePostStatus} from '../helpers/helpers'
 import {storeData, getData} from '../helpers/asyncStorageHelpers'
+import {usePostList} from '../api/jsonPlaceHolder/jsonPlaceHolderAPIHook'
 
 const PostList = ({navigation}) => {
   navigation.setOptions({
@@ -29,9 +28,8 @@ const PostList = ({navigation}) => {
     ),
   })
 
-  const [posts, setPosts] = useState([])
-  const [postListLoading, setPostListLoading] = useState(true)
-  const [postError, setPostError] = useState(false)
+  const [ fetchPosts, posts, postListLoading, postError] = usePostList()
+
   const [sortedPosts, setSortedPostsState] = useState([])
 
   const setSortedPosts = (newPosts) => {
@@ -39,27 +37,16 @@ const PostList = ({navigation}) => {
     setSortedPostsState(newPosts)
   }
 
-  const fetchPosts = ()=>{
-    setPostListLoading(true)
-    axios.get("https://jsonplaceholder.typicode.com/posts").then((data) => {
-      const newPosts = data.data
-      setPosts(newPosts)
-      setPostError(false)
-      setSortedPosts(sortByFavorite([...newPosts]))
-    })
-    .catch(() => {
-      setPostError("Something wrong happened to get the post list");
-    })
-    .finally(() => {
-      setPostListLoading(false)
-    });
-  }
+  useEffect(() =>{
+    if(posts.length > 0){
+      setSortedPosts(sortByFavorite(posts))
+    }
+  },[posts])
 
   const findInitialState = async () => {
     let storedPosts = await getData('posts')
     if(storedPosts){
       setSortedPostsState(storedPosts)
-      setPostListLoading(false)
     } else {
       fetchPosts()
     }
@@ -74,10 +61,10 @@ const PostList = ({navigation}) => {
   }
 
   const onDelete = (postId) => {
-    let newData = posts.filter(function(value){
+    let newData = sortedPosts.filter(function(value){
       return value.id !== postId
     })
-    setPosts(newData)
+    setSortedPosts(newData)
   }
 
   const onLongpressHandler = (post) => {
