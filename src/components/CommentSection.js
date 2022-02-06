@@ -7,7 +7,7 @@ const CommentSection = ({commentList}) => {
     return (
         <View style={styles.cardContainer}>
             <Text style={styles.generalTitle}>Comments</Text>
-            {commentList.map((item)=>  <CommentCard comment = {item}/>)}
+            {commentList.map((item)=>  <CommentCard comment = {item} key={item.id}/>)}
         </View>
     )
 }
