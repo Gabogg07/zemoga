@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { getPostDetail, getPostList } from "./jsonPlaceHolderService";
+import { getPostComments, getPostList, getUserData} from "./jsonPlaceHolderService";
 
 
 const usePostList = () => {
@@ -11,7 +11,6 @@ const usePostList = () => {
         setLoading(true);
         getPostList()
         .then((data) => {
-            console.log(data)
             setData(data.data);
         })
         .catch(() => {
@@ -30,15 +29,14 @@ const usePostComments = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const handleRequest = () => {
+    const handleRequest = (postId) => {
         setLoading(true);
-        getPostList()
+        getPostComments(postId)
         .then((data) => {
-            console.log(data)
             setData(data.data);
         })
         .catch(() => {
-            setError("Something wrong happened to get the post list");
+            setError("Something wrong happened to get the post comments");
         })
         .finally(() => {
             setLoading(false);
@@ -53,15 +51,14 @@ const useUserData = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const handleRequest = () => {
+    const handleRequest = (userId) => {
         setLoading(true);
-        getPostList()
+        getUserData(userId)
         .then((data) => {
-            console.log(data)
             setData(data.data);
         })
         .catch(() => {
-            setError("Something wrong happened to get the post list");
+            setError("Something wrong happened to get the user data");
         })
         .finally(() => {
             setLoading(false);

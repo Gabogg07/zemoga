@@ -7,12 +7,12 @@ export const getPostList = async () => {
     .then(( data ) => data);
 };
 
-export const getPostComments = async () => {
-  return axios.get(`${baseURL}posts`)
+export const getPostComments = async (postId) => {
+  return axios.get(`${baseURL}posts/${postId}/comments`)
     .then(( data ) => data);
 };
 
-export const getuserData = async () => {
-  return axios.get(`${baseURL}posts`)
+export const getUserData = async (userId) => {
+  return axios.get(`${baseURL}users/${userId}`)
     .then(( data ) => data);
 };
