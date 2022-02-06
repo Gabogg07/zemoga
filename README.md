@@ -14,6 +14,13 @@ gabrieleduardogg@gmail.com
 - 🛣 Routing and Navigation with [React-Navigation](https://reactnavigation.org)
 - 🧰 All necessary packages are already installed
 -    Persistent data managed with [React-Native-async-storage](https://github.com/react-native-async-storage/async-storage)
+
+## Requirement fulfillment 
+ - In order to refresh the posts the pull to refresh functionality has been implemented
+ - For deleted all the current posts there is a trash bin on the header 's right side
+ - For deleted a single post the longPress on item was implemented for each post button on the list
+
+ For all the delete features a confirmation alert was added in order to confirm this "permanent" decision.
 ## Basic structure and configurations
 
 All under the src directory
